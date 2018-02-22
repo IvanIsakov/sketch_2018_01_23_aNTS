@@ -1,3 +1,12 @@
+/*
+Particles (ants) travel around randomly and leave the traces behind them (pheromones)
+
+
+Copyright
+Isakov Ivan
+2018-02-22
+*/
+
 ArrayList<Ant> hive = new ArrayList<Ant>();
 ArrayList<Ant> antsWithFood = new ArrayList<Ant>();
 ArrayList<Food> couldron = new ArrayList<Food>();
@@ -45,6 +54,16 @@ void draw() {
     b.update();
     b.display();
   }
+  
+  // Remove baloons that flew away
+  for (int i = baloons.size()-1; i > -1; i--) {
+    if (baloons.get(i).position.x > width + baloons.get(i).sizeB||
+        baloons.get(i).position.x < 0 - baloons.get(i).sizeB||
+        baloons.get(i).position.y > height + baloons.get(i).sizeB||
+        baloons.get(i).position.y < 0 - baloons.get(i).sizeB) {
+       baloons.remove(i);
+        }
+  }
   println(baloons.size());
   /*
   println(foodAtHome);
@@ -78,9 +97,9 @@ class Ant {
   void update() {
     PVector velocityDiv = PVector.mult(velocity, 0.5);
     position.add(velocityDiv);
-    rememberWhereIwas(position);
+    rememberWhereIwas(position); // Create pheromone trace
     PVector nos = new PVector(randomGaussian(),randomGaussian());
-    velocity.add(nos.mult(0.1));
+    velocity.add(nos.mult(0.1));  // add noise to the movement
     velocity.limit(5);
     
      // Bounce of the wall
@@ -104,7 +123,7 @@ class Ant {
     }
     
     checkTrace();
-    eveadeCollidsion();
+    evadeCollision();
     //goHome();
   }
   
@@ -117,7 +136,7 @@ class Ant {
     line(position.x,position.y,position.x-velocity.x,position.y-velocity.y);
   }
   
-  
+  // Leave a pheromone trace by creating an array with previous position values
   void rememberWhereIwas(PVector newVector) {
     if (iHaveFood) {
       arrayX1.add(newVector.x);
@@ -139,6 +158,7 @@ class Ant {
     }
   }
   
+  // Draw the trace
   void drawPath() {
 //    println(arrayX1.size());
     
@@ -152,7 +172,7 @@ class Ant {
       line(arrayX1.get(i),arrayY1.get(i),arrayX1.get(i+1),arrayY1.get(i+1));
     }
   }
-  
+  // For food scavenging.
   void goHome() {
     PVector home = new PVector(0,height);
     PVector distanceFromHome = PVector.sub(home,position);
@@ -170,6 +190,7 @@ class Ant {
     }
   }
   
+  // Check others' traces, get attracted to them and follow them
   void checkTrace() {
     for (Ant a1 : hive) {
       if (a1 != this) {
@@ -195,7 +216,7 @@ class Ant {
     }
   }
   
-  void eveadeCollidsion() {
+  void evadeCollision() {
     for (Ant a1 : hive) {
       if (a1 != this) {
         PVector distance = PVector.sub(a1.position,position);
@@ -257,6 +278,7 @@ class Food {
   
 }
 
+// Baloons that are created when the ants are too close to each other
 class Baloon {
   PVector position, velocity;
   float sizeB;
