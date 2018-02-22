@@ -1,6 +1,7 @@
 /*
 Particles (ants) travel around randomly and leave the traces behind them (pheromones)
-
+Other ants sniff the traces, get attracted to them and follow them.
+Ants don't like being veeery close and make big blue baloons when it happens
 
 Copyright
 Isakov Ivan
